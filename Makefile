@@ -7,7 +7,9 @@ LIBFT = $(LIBFT_DIR)/libft.a
 LIB = -lreadline
 
 SRCS = main.c minishell.c var_list.c var_val.c var_control.c \
-		extract_cmd_utils.c \
+		parsing.c tokenize.c tokenize_types.c extract_word.c \
+		dollar_sign.c \
+		readline_utils.c extract_cmd_utils.c dollar_sign_utils.c \
 		tokenize_utils.c var_list_utils.c parsing_utils.c
 OBJS = $(SRCS:.c=.o)
 
