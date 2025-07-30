@@ -6,6 +6,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <stdbool.h>
+# include <fcntl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -61,6 +62,7 @@ typedef struct	s_command
 {
 	char	*cmd;
 	char	**args;
+	int		argc;
 	char	*infile;
 	char	*outfile;
 	int		append;
@@ -75,6 +77,14 @@ typedef struct	s_cmdlist
 	struct	s_cmdlist	*next;
 }				t_cmdlist;
 
+typedef struct s_pipex 
+{
+	int		prev_pipe;
+	int		pipefd[2];
+	int		f_fds[2];
+	char	**envp;
+}				t_pipex;
+
 //readline_utils.c
 int		has_unclosed_quote(char *input);
 //minishell.c
@@ -84,6 +94,8 @@ t_cmdlist	*parse_cmd_line(t_parser *parser, t_varlist **head_var);
 //parsing_utils.c
 int		ft_strcmp(char *s1, char *s2);
 void	skip_whitespace(t_parser *parse);
+void	add_cmdlist_back(t_cmdlist **head, t_cmdlist *cmd_node);
+void	clean_cmdlist(t_cmdlist **head);
 //var_list.c
 void    create_var_list_or_find_node(t_varlist **head, char *input);
 int		is_valide_varname(char *input);
@@ -119,5 +131,21 @@ int		if_dollar_sign(char *str);
 int		is_varname_format(char *str);
 void	free_vars_vals(char **vars, char **vals);
 int		real_length_of_word(char *str, int vals_len);
+//process_token.c
+int		is_cmd_token(int type);
+int		process_token(t_parser *p, t_cmdlist *cmd);
+int		handle_word(t_parser *p, char **args, int *argc);
+// process_token_utils.c
+int		is_cmd_token(int type);
+int		set_error(t_parser *p);
+//pipex.c
+void	init_pipe_data(t_pipex *pipe_data, char **envp);
+void	execute_pipeline(t_cmdlist **head_cmd, t_parser *parser, t_pipex *pipe_data);
+//pipex_utils.c
+int		if_pipex(t_cmdlist **head_cmd);
+int		get_in_out_files_fd(t_cmdlist **head, t_parser *p, t_pipex *pipe_data);
+//checker_files_access.c
+int		check_infile_permission(t_parser *parser, char *infile);
+int		check_outfile_permission(t_parser *parser, char *outfile);
 
 #endif

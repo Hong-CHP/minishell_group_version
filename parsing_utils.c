@@ -20,3 +20,34 @@ void skip_whitespace(t_parser *parse)
 		parse->pos++;
 }
 
+void	clean_cmdlist(t_cmdlist **head)
+{
+	t_cmdlist	*cur;
+	t_cmdlist	*next;
+
+	cur = *head;
+	while (cur)
+	{
+		next = cur->next;
+		free(cur->command);
+		free(cur);
+		cur = next;
+	}
+	*head = NULL;
+}
+
+void	add_cmdlist_back(t_cmdlist **head, t_cmdlist *cmd_node)
+{
+	t_cmdlist	*cur;
+
+	cur = NULL;
+	if (!*head)
+		*head = cmd_node;
+	else
+	{
+		cur = *head;
+		while (cur->next)
+			cur = cur->next;
+		cur->next = cmd_node;
+	}
+}

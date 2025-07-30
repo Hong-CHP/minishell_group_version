@@ -25,10 +25,7 @@ t_token *create_token(t_tk_type type, char *value)
 		return (NULL);
 	tok->type = type;
 	if (value)
-	{
 		tok->value = ft_strdup(value);
-		printf("tok->value is %s\n", tok->value);
-	}
 	else
 		tok->value = NULL;
 	tok->next = NULL;
