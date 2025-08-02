@@ -139,13 +139,16 @@ int		handle_word(t_parser *p, char **args, int *argc);
 int		is_cmd_token(int type);
 int		set_error(t_parser *p);
 //pipex.c
-void	init_pipe_data(t_pipex *pipe_data, char **envp);
 void	execute_pipeline(t_cmdlist **head_cmd, t_parser *parser, t_pipex *pipe_data);
 //pipex_utils.c
 int		if_pipex(t_cmdlist **head_cmd);
+t_pipex	*init_pipe_data(t_pipex *pipe_data, char **envp);
 int		get_in_out_files_fd(t_cmdlist **head, t_parser *p, t_pipex *pipe_data);
 //checker_files_access.c
 int		check_infile_permission(t_parser *parser, char *infile);
 int		check_outfile_permission(t_parser *parser, char *outfile);
+//build_in.c
+int		if_buildin(char *cmd);
+int		execute_builtin(t_command *cmd_node, char **ev);
 
 #endif

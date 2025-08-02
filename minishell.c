@@ -96,14 +96,17 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 		free_parser(parser);
 		return;
 	}
+	pipe_data = NULL;
 	// print_fill_result(&head_cmd, &parser->tokens);
-	if(if_pipex(&head_cmd) == 0 && if_buildin(head_cmd->command->cmd))
-		execute_buildin(head_cmd->command, envp);
+	if(if_pipex(&head_cmd) == 1 && if_buildin(head_cmd->command->cmd))
+		execute_builtin(head_cmd->command, envp);
 	if (if_pipex(&head_cmd) > 1)
 	{
-		init_pipe_data(pipe_data, envp);
+		if (!init_pipe_data(pipe_data, envp))
+			return ;
 		execute_pipeline(&head_cmd, parser, pipe_data);
 	}
 	// free_cmd(cmd_list);
 	// free_parser(parser);
+	// free_pipe_data(pipe_data);
 }

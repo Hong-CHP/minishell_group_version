@@ -16,6 +16,18 @@ int		if_pipex(t_cmdlist **head_cmd)
 	return (pipe);
 }
 
+t_pipex	*init_pipe_data(t_pipex *pipe_data, char **envp)
+{
+	pipe_data = malloc(sizeof(t_pipex));
+	if (!pipe_data)
+		return (NULL);
+	pipe_data->f_fds[0] = 0;
+	pipe_data->f_fds[1] = 1;
+	pipe_data->envp = envp;
+	pipe_data->prev_pipe = -1;
+	return (pipe_data);
+}
+
 int		get_in_out_files_fd(t_cmdlist **head, t_parser *p, t_pipex *pipe_data)
 {
 	t_cmdlist *cur;
