@@ -3,16 +3,6 @@
 
 t_command	*tokenize_cmd(t_parser *parser, t_varlist **head_var, t_cmdlist *node)
 {
-	t_varlist *cur;
-	cur = *head_var;
-	while(cur)
-	{
-		if (cur->var_data && cur->var_data->var && cur->var_data->val)
-			printf("cur content: %s = %s export %d\n", cur->var_data->var, cur->var_data->val, cur->var_data->exported);
-		else
-			printf("cur node has null data\n");
-		cur = cur->next;
-	}
 	while (parser->current && is_cmd_token(parser->current->type))
 	{
 		if (parser->current->type == TOKEN_WORD)
@@ -112,6 +102,7 @@ t_cmdlist	*parse_pipeline(t_parser *parser, t_varlist **head_var)
 t_cmdlist	*parse_cmd_line(t_parser *parser, t_varlist **head_var)
 {
 	parser->tokens = tokenize(parser, head_var);
+	printf("parser->tokens->ytpe and value is %d, %s\n", parser->tokens->type, parser->tokens->value);
 	parser->current = parser->tokens;
 	if (parser->error)
 		return (NULL);

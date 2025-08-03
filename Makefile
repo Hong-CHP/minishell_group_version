@@ -9,7 +9,9 @@ LIB = -lreadline
 SRCS = main.c minishell.c var_list.c var_val.c var_control.c \
 		parsing.c tokenize.c tokenize_types.c extract_word.c build_in.c \
 		dollar_sign.c process_token.c pipex.c checker_files_access.c \
+		execute_cmd.c \
 		readline_utils.c extract_cmd_utils.c dollar_sign_utils.c pipex_utils.c \
+		execute_cmd_utils.c \
 		tokenize_utils.c var_list_utils.c parsing_utils.c process_token_utils.c 
 OBJS = $(SRCS:.c=.o)
 

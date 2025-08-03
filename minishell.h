@@ -9,6 +9,7 @@
 # include <fcntl.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/wait.h>
 
 typedef enum e_tk_type 
 {
@@ -150,5 +151,8 @@ int		check_outfile_permission(t_parser *parser, char *outfile);
 //build_in.c
 int		if_buildin(char *cmd);
 int		execute_builtin(t_command *cmd_node, char **ev);
-
+//execute_cmd.c
+void	execute_cmd(t_command *cmd, char **ev);
+//execute_cmd_utils.c
+int		if_slash(char *str);
 #endif

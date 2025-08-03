@@ -25,9 +25,10 @@ void	child_process(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 		close(pipe_data->pipefd[1]);
 	}
 	if(if_buildin(cur->command->cmd))
-		execute_builtin(cur->command, pipe_data->envp);
+	{}
+		// execute_builtin(cur->command, pipe_data->envp);
 	else
-		execute_cmd();
+		execute_cmd(cur->command, pipe_data->envp);
 }
 
 void	parent_process(t_cmdlist *cur, t_pipex *pipe_data)
