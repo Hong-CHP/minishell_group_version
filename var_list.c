@@ -34,6 +34,7 @@ void	create_var_list(t_varlist **head, char *input)
 	var_node = malloc(sizeof(t_varlist));
 	if (!var_node)
 		return ;
+	ft_memset(var_node, 0, sizeof(t_varlist));
 	var_node->var_data = malloc(sizeof(t_variable));
 	if (!var_node->var_data)
 	{
@@ -55,7 +56,9 @@ void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node)
 {
 	char *match_var;
 	char   *find_var;
-		
+
+	if (!input[6] || !input[7])
+		return ;
 	if (ft_strchr(input, '='))
 	{
 		match_var = ft_strchr(input, '=');

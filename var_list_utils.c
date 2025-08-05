@@ -3,7 +3,7 @@
 
 int	if_export_variable(char *content)
 {
-	if (ft_strncmp("export ", content, 7) == 0)
+	if (ft_strncmp("export", content, 6) == 0)
 		return (1);
 	return (0);
 }
@@ -32,7 +32,12 @@ void	clean_var_list(t_varlist **head)
     while (cur)
     {
         next = cur->next;
-        free(cur->var_data);
+        if (cur->var_data)
+        {
+            free(cur->var_data->var);
+            free(cur->var_data->val);
+            free(cur->var_data);
+        }
         free(cur);
         cur = next;
     }

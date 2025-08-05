@@ -78,7 +78,7 @@ t_variable	*verify_and_init_var_val(char *input, t_variable *var_dt)
 
 int 	init_registre_variable(t_variable *var_dt, char *input)
 {
-	char		*value;
+	char	*value;
 
 	value = NULL;
 	if (if_export_variable(input))
