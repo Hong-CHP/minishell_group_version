@@ -11,6 +11,8 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 
+// extern volatile sig_atomic_t g_signal_status;
+
 typedef enum e_tk_type 
 {
 	TOKEN_WORD,
@@ -65,7 +67,9 @@ typedef struct	s_command
 	char	**args;
 	int		argc;
 	char	*infile;
+	int		in_fd;
 	char	*outfile;
+	int		out_fd;
 	int		append;
 	int		here_doc;
 	char	*limiter;
@@ -140,11 +144,11 @@ int		handle_word(t_parser *p, char **args, int *argc);
 int		is_cmd_token(int type);
 int		set_error(t_parser *p);
 //pipex.c
-void	execute_pipeline(t_cmdlist **head_cmd, t_parser *parser, t_pipex *pipe_data);
+void	execute_pipeline(t_cmdlist **head_cmd, t_pipex *pipe_data);
 //pipex_utils.c
 int		if_pipex(t_cmdlist **head_cmd);
 t_pipex	*init_pipe_data(t_pipex *pipe_data, char **envp);
-int		get_in_out_files_fd(t_cmdlist **head, t_parser *p, t_pipex *pipe_data);
+int		get_in_out_files_fd(t_cmdlist **head, t_pipex *pipe_data);
 //checker_files_access.c
 int		check_infile_permission(t_parser *parser, char *infile);
 int		check_outfile_permission(t_parser *parser, char *outfile);
@@ -153,6 +157,14 @@ int		if_buildin(char *cmd);
 int		execute_builtin(t_command *cmd_node, char **ev);
 //execute_cmd.c
 void	execute_cmd(t_command *cmd, char **ev);
+void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data);
 //execute_cmd_utils.c
 int		if_slash(char *str);
+char	**find_sign_then_split(char *str);
+void	free_split(char **strs);
+//execute_here_doc.c
+int		execute_here_doc(t_cmdlist **head_cmd, t_pipex *pipe_data);
+//get_next_line.c
+char	*get_next_line(int fd);
+
 #endif

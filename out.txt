@@ -1,7 +1,1 @@
-hererrrr
-cmd->args is: grep
-cmd->args is: o
-hererrrr
-[1;33mminishell[0m> cmd->args is: grep
-cmd->args is: o
-[1;33mminishell[0m> ^C^C
+3

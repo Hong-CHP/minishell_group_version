@@ -23,33 +23,31 @@ void	setup_sigaction(void)
 }
 
 //review if next line with ctrl+c ctrl+d as input
-void	read_content_unclose_quote(char *input)
+int		read_content_unclose_quote(char **input)
 {
 	char	*next_line;
 	char	*tmp;
 
-	while (has_unclosed_quote(input))
+	while (has_unclosed_quote(*input))
 	{
 		next_line = readline("\1\033[1;33m\2>\1\033[0m\2> ");
 		if (next_line == NULL)
 		{
-			rl_on_new_line();
-			printf("exit\n");
-			break ;
-		}
-		else if (ft_strcmp(next_line, "exit") == 0)
-		{
-			free(next_line);
-			break ;
-		}
-		tmp = input;
-		input = ft_strjoin(tmp, "\n");
+            free(*input);
+            *input = NULL;
+            rl_on_new_line();
+            printf("exit\n");
+            return 0;
+        }
+		tmp = *input;
+		*input = ft_strjoin(tmp, "\n");
 		free(tmp);
-		tmp = input;
-		input = ft_strjoin(tmp, next_line);
+		tmp = *input;
+		*input = ft_strjoin(tmp, next_line);
 		free(tmp);
 		free(next_line);
 	}
+	return (1);
 }
 
 void	read_the_line(char *input, t_varlist **head_var, char **envp)
@@ -72,7 +70,8 @@ void	read_the_line(char *input, t_varlist **head_var, char **envp)
 			rl_clear_history(); 
 		else if (*input)
 		{
-			read_content_unclose_quote(input);
+			if(!read_content_unclose_quote(&input))
+				break ;
 			add_history(input);
 			minishell(input, head_var, envp);
 		}
@@ -85,7 +84,7 @@ int	main(int argc, char **argv, char **envp)
 	char		*input;
 	t_varlist	*head_var;
 	(void)		argv;
-	
+
 	if (argc != 1)
 		return (1);
 	head_var = NULL;

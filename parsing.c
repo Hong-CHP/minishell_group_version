@@ -3,20 +3,21 @@
 
 t_command	*tokenize_cmd(t_parser *parser, t_varlist **head_var, t_cmdlist *node)
 {
+	(void)head_var;
 	while (parser->current && is_cmd_token(parser->current->type))
 	{
 		if (parser->current->type == TOKEN_WORD)
 		{
-			if (ft_strchr(parser->current->value, '=')
-				|| if_export_variable(parser->current->value))
-				create_var_list_or_find_node(head_var, parser->input);
-			else
-			{
+			// if (ft_strchr(parser->current->value, '=')
+			// 	|| if_export_variable(parser->current->value))
+			// 	create_var_list_or_find_node(head_var, parser->input);
+			// else
+			// {
 				handle_word(parser, node->command->args, &(node->command->argc));
 				node->command->cmd = node->command->args[0];
 				node->command->args[node->command->argc] = NULL;
 				printf("args[%d] is : %s\n", node->command->argc - 1, node->command->args[node->command->argc - 1]);
-			}
+			// }
 		}
 		else
 		{
