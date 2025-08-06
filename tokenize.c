@@ -41,11 +41,9 @@ t_token	*create_word_token(t_parser *parser, t_varlist **head_var)
 	if (!word)
 		return (NULL);
 	tok = create_token(TOKEN_WORD, word);
+	free(word);
 	if (!tok)
-	{
-		free(word);
 		return (NULL);
-	}
 	return (tok);
 }
 

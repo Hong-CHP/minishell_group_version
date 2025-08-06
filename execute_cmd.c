@@ -111,10 +111,16 @@ void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_dat
 	}
 	if (pid == 0)
 	{
-		dup2(pipe_data->f_fds[0], 0);
-		close(pipe_data->f_fds[0]);
-		dup2(pipe_data->f_fds[1], 1);
-		close(pipe_data->f_fds[1]);
+		if (pipe_data->f_fds[0] != -1)
+		{
+			dup2(pipe_data->f_fds[0], 0);
+			close(pipe_data->f_fds[0]);
+		}
+		if (pipe_data->f_fds[1] != -1)
+		{
+			dup2(pipe_data->f_fds[1], 1);
+			close(pipe_data->f_fds[1]);
+		}
 		execute_cmd(cmd, pipe_data->envp);
 	}
 	else

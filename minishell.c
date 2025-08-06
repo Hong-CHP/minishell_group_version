@@ -129,8 +129,8 @@ void	execute_cmd_or_cmds(t_parser *parser, t_cmdlist **head_cmd, t_pipex	*pipe_d
 
 void	minishell(char *input, t_varlist **head_var, char **envp)
 {
-	t_parser	*parser;
-	t_cmdlist	*head_cmd;
+	t_parser	*parser; //malloc
+	t_cmdlist	*head_cmd;//malloc
 	t_pipex		*pipe_data;
 
 	if (!input || !*input)
@@ -145,8 +145,7 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 			printf("cur_var node has null data\n");
 		cur_var = cur_var->next;
 	}
-	if (ft_strchr(input, '=')
-		|| if_export_variable(input))
+	if (ft_strchr(input, '=') || if_export_variable(input))
 	{
 		create_var_list_or_find_node(head_var, input);
 		return ;
