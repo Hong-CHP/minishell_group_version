@@ -30,7 +30,7 @@ void    find_var_node_modif_val(t_variable *modif_var_node, char *match)
 void	create_var_list(t_varlist **head, char *input)
 {
 	t_varlist	*var_node;
-
+	
 	var_node = malloc(sizeof(t_varlist));
 	if (!var_node)
 		return ;
@@ -52,13 +52,16 @@ void	create_var_list(t_varlist **head, char *input)
 	add_var_lst_front(head, var_node);
 }
 
-void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node)
+void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node, char **envp)
 {
 	char *match_var;
 	char   *find_var;
 
-	if (!input[6] || !input[7])
+	if (!input[6])
+	{
+		export_vars(head, envp);
 		return ;
+	}
 	if (ft_strchr(input, '='))
 	{
 		match_var = ft_strchr(input, '=');
@@ -79,7 +82,7 @@ void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node)
 		free(find_var);
 }
 
-void	create_var_list_or_find_node(t_varlist **head, char *input)
+void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp)
 {
 	char		*match_var;
 	char		*find_var;
@@ -89,7 +92,7 @@ void	create_var_list_or_find_node(t_varlist **head, char *input)
 	match_var = NULL;
 	find_var = NULL;
 	if (if_export_variable(input))
-		process_var_val_export(head, input, var_node);
+		process_var_val_export(head, input, var_node, envp);
 	else if (!if_export_variable(input) && ft_strchr(input, '='))
 	{
 		if (ft_list_size(head) > 0)

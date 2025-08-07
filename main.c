@@ -77,6 +77,8 @@ void	read_the_line(char *input, t_varlist **head_var, char **envp)
 		}
 		free(input);
 	}
+	if (input)
+		free(input);
 }
 
 int	main(int argc, char **argv, char **envp)

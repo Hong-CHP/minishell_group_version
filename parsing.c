@@ -8,16 +8,10 @@ t_command	*tokenize_cmd(t_parser *parser, t_varlist **head_var, t_cmdlist *node)
 	{
 		if (parser->current->type == TOKEN_WORD)
 		{
-			// if (ft_strchr(parser->current->value, '=')
-			// 	|| if_export_variable(parser->current->value))
-			// 	create_var_list_or_find_node(head_var, parser->input);
-			// else
-			// {
-				handle_word(parser, node->command->args, &(node->command->argc));
-				node->command->cmd = node->command->args[0];
-				node->command->args[node->command->argc] = NULL;
-				printf("args[%d] is : %s\n", node->command->argc - 1, node->command->args[node->command->argc - 1]);
-			// }
+			handle_word(parser, node->command->args, &(node->command->argc));
+			node->command->cmd = node->command->args[0];
+			node->command->args[node->command->argc] = NULL;
+			printf("args[%d] is : %s\n", node->command->argc - 1, node->command->args[node->command->argc - 1]);
 		}
 		else
 		{
@@ -103,7 +97,6 @@ t_cmdlist	*parse_pipeline(t_parser *parser, t_varlist **head_var)
 t_cmdlist	*parse_cmd_line(t_parser *parser, t_varlist **head_var)
 {
 	parser->tokens = tokenize(parser, head_var);
-	printf("parser->tokens->ytpe and value is %d, %s\n", parser->tokens->type, parser->tokens->value);
 	parser->current = parser->tokens;
 	if (parser->error)
 		return (NULL);

@@ -67,9 +67,7 @@ typedef struct	s_command
 	char	**args;
 	int		argc;
 	char	*infile;
-	int		in_fd;
 	char	*outfile;
-	int		out_fd;
 	int		append;
 	int		here_doc;
 	char	*limiter;
@@ -102,7 +100,7 @@ void	skip_whitespace(t_parser *parse);
 void	add_cmdlist_back(t_cmdlist **head, t_cmdlist *cmd_node);
 void	clean_cmdlist(t_cmdlist **head);
 //var_list.c
-void    create_var_list_or_find_node(t_varlist **head, char *input);
+void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp);
 int		is_valide_varname(char *input);
 //var_list_utils.c
 int		if_export_variable(char *content);
@@ -166,5 +164,8 @@ void	free_split(char **strs);
 int		execute_here_doc(t_cmdlist **head_cmd, t_pipex *pipe_data);
 //get_next_line.c
 char	*get_next_line(int fd);
+//count_size_of_envp.c
+void	export_vars(t_varlist **head, char **envp);
+int		count_size_of_envp(char **envp);
 
 #endif

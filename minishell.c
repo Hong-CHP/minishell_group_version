@@ -1,6 +1,34 @@
 #include "minishell.h"
 #include "libft.h"
 
+void	free_cmdlist(t_cmdlist **head_cmd)
+{
+	t_cmdlist *cur;
+	t_cmdlist *next;
+
+	cur = *head_cmd;
+	while (cur)
+	{
+		next = cur->next;
+		if (cur->command && cur->command->args)
+		{
+			while (cur->command->argc >= 0)
+			{
+				free(cur->command->args[cur->command->argc]);
+				cur->command->argc--;
+			}
+			free(cur->command->args);
+		}
+		if (cur->command->infile)
+			free(cur->command->infile);
+		if (cur->command->outfile)
+			free(cur->command->outfile);
+		free(cur->command);
+		free(cur);
+		cur = next;
+	}
+}
+
 void	free_parser(t_parser *parser)
 {
 	t_token	*current;
@@ -147,7 +175,7 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 	}
 	if (ft_strchr(input, '=') || if_export_variable(input))
 	{
-		create_var_list_or_find_node(head_var, input);
+		create_var_list_or_find_node(head_var, input, envp);
 		return ;
 	}
 	parser = init_parser(input);
@@ -174,7 +202,7 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 	}
 	init_pipe_data(pipe_data, envp);
 	execute_cmd_or_cmds(parser, &head_cmd, pipe_data);
-	// free_cmd(cmd_list);
+	free_cmdlist(&head_cmd);
 	free_parser(parser);
-	// free_pipe_data(pipe_data);
+	free(pipe_data);
 }
