@@ -75,16 +75,17 @@ t_parser	*init_parser(char *input)
 
 void	print_fill_result(t_varlist **head_var, t_cmdlist **head_cmd, t_token **tok)
 {
-	t_varlist *cur_var;
-	cur_var = *head_var;
-	while(cur_var)
-	{
-		if (cur_var->var_data)
-			printf("cur_var data var: %s (val: %s)\n", cur_var->var_data->var, cur_var->var_data->val);
-		else
-			printf("cur_var node has null data\n");
-		cur_var = cur_var->next;
-	}
+	(void)head_var;
+	// t_varlist *cur_var;
+	// cur_var = *head_var;
+	// while(cur_var)
+	// {
+	// 	if (cur_var->var_data)
+	// 		printf("cur_var data var: %s (val: %s)\n", cur_var->var_data->var, cur_var->var_data->val);
+	// 	else
+	// 		printf("cur_var node has null data\n");
+	// 	cur_var = cur_var->next;
+	// }
 	t_cmdlist *cur;
 	cur = *head_cmd;
 	int pipe = 0;
@@ -111,11 +112,11 @@ void	print_fill_result(t_varlist **head_var, t_cmdlist **head_cmd, t_token **tok
 
 }
 
-void	execute_cmd_or_cmds(t_parser *parser, t_cmdlist **head_cmd, t_pipex	*pipe_data)
+void	execute_cmd_or_cmds(t_varlist **head_var, t_cmdlist **head_cmd, t_pipex	*pipe_data, char **ev)
 {
-	(void)parser;
 	if (if_pipex(head_cmd) > 1)
 	{
+		printf("i am in executing cmds\n");	
 		if ((*head_cmd)->command->here_doc == 1)
 		{
 			if (!execute_here_doc(head_cmd, pipe_data))
@@ -133,9 +134,8 @@ void	execute_cmd_or_cmds(t_parser *parser, t_cmdlist **head_cmd, t_pipex	*pipe_d
 	else
 	{
 		printf("executing single commande: \n");
-		if (if_buildin((*head_cmd)->command->cmd))
-		{}
-			// execute_builtin((*head_cmd)->command, envp);
+		if (if_buildin((*head_cmd)->command->args[0]))
+			execute_builtin(head_var, (*head_cmd)->command, ev);
 		else
 		{
 			if ((*head_cmd)->command->here_doc == 1)
@@ -201,7 +201,7 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 		return ;
 	}
 	init_pipe_data(pipe_data, envp);
-	execute_cmd_or_cmds(parser, &head_cmd, pipe_data);
+	execute_cmd_or_cmds(head_var, &head_cmd, pipe_data, envp);
 	free_cmdlist(&head_cmd);
 	free_parser(parser);
 	free(pipe_data);

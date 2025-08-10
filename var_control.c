@@ -18,18 +18,11 @@ int		no_quote_no_space(char *str)
 	return(1);
 }
 
-char	*if_variable_val(char *input)
+char	**if_val_after_equal(char *input, int i, char **val)
 {
-	char	*val;
 	int		count_val;
-	int		i;
 
-	i = 0;
 	count_val = 0;
-	while (input[i] && input[i] != '=')
-		i++;
-	if (input[i])
-		i++;
 	if (!no_quote_no_space(&input[i]))
 		return (NULL);
 	while (input[i])
@@ -39,10 +32,36 @@ char	*if_variable_val(char *input)
 	}
 	if (count_val == 0 || input[i] == ' ')
 		return (NULL);
-	val = malloc(sizeof(char) * (count_val + 1));
-	if (!val)
+	*(val) = malloc(sizeof(char) * (count_val + 1));
+	if (!*(val))
 		return (NULL);
-	ft_memset(val, 0, count_val + 1);
+	ft_memset(*(val), 0, count_val + 1);
+	return (val);
+}
+
+char	*if_variable_val(char *input)
+{
+	char	*val;
+
+	int		i;
+
+	i = 0;
+	while (input[i] && input[i] != '=')
+		i++;
+	if (input[i] == '=')
+		i++;
+	else
+	{
+		val = ft_strdup("");
+		return (val);
+	}
+	if (!input[i])
+	{
+		val = ft_strdup("");
+		return (val);
+	}
+	if (!if_val_after_equal(input, i, &val))
+		return (NULL);
 	return (val);
 }
 
@@ -61,8 +80,6 @@ int	is_valide_varname(char *input)
 			return (0);
 		i++;
 	}
-	if (input[i] != '=')
-		return (0);
 	return (1);
 }
 

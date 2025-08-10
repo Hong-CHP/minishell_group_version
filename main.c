@@ -85,13 +85,23 @@ int	main(int argc, char **argv, char **envp)
 {
 	char		*input;
 	t_varlist	*head_var;
+	int		envp_size;
+	int		i;
 	(void)		argv;
-
+	
 	if (argc != 1)
 		return (1);
+	envp_size = count_size_of_envp(envp);
 	head_var = NULL;
 	input = NULL;
 	setup_sigaction();
+	i = 0;
+	while (i < envp_size)
+	{
+		create_var_list(&head_var, envp[i]);
+		set_varlist_exported(&head_var);
+		i++;
+	}
 	read_the_line(input, &head_var, envp);
 	clean_var_list(&head_var);
 	return (0);

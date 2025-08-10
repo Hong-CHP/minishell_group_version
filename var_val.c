@@ -65,9 +65,9 @@ t_variable	*verify_and_init_var_val(char *input, t_variable *var_dt)
 		var_dt->var = if_variable_var(&input[7]);
 	else
 		var_dt->var = if_variable_var(input);
-	var_dt->val = if_variable_val(input);
 	if (!var_dt->var)
 		return (NULL);
+	var_dt->val = if_variable_val(input);
 	if (!var_dt->val)
 	{
 		free(var_dt->var);
@@ -83,6 +83,7 @@ int 	init_registre_variable(t_variable *var_dt, char *input)
 	value = NULL;
 	if (if_export_variable(input))
 		var_dt->exported = 1;
+	printf("i am adding a variable and value %s, %s\n", var_dt->var, var_dt->val);
 	if (!verify_and_init_var_val(input, var_dt))
 		return (0);
 	if (!registre_var_val(input, var_dt, value))

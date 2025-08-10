@@ -19,7 +19,10 @@ void    find_var_node_modif_val(t_variable *modif_var_node, char *match)
 {
     char *find_val;
 
-    find_val = ft_strdup(match + 1);
+	if (*(match + 1))
+    	find_val = ft_strdup(match + 1);
+	else
+		find_val = ft_strdup("");
     if (!find_val)
         return ;
     if (modif_var_node->val)
@@ -52,14 +55,14 @@ void	create_var_list(t_varlist **head, char *input)
 	add_var_lst_front(head, var_node);
 }
 
-void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node, char **envp)
+void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node)
 {
 	char *match_var;
 	char   *find_var;
 
 	if (!input[6])
 	{
-		export_vars(head, envp);
+		print_all_variable_in_list(head);
 		return ;
 	}
 	if (ft_strchr(input, '='))
@@ -72,12 +75,13 @@ void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node,
 	var_node = search_target_var_node(head, find_var);
 	if (!var_node)
 		create_var_list(head, input);
-	else
+	else if (var_node && ft_strchr(input, '='))
 	{
-		if (ft_strchr(input, '='))
-			find_var_node_modif_val(var_node, match_var);
+		find_var_node_modif_val(var_node, match_var);
 		var_node->exported = 1;
 	}
+	else if (var_node && !ft_strchr(input, '='))
+		var_node->exported = 1;
 	if (find_var)
 		free(find_var);
 }
@@ -92,7 +96,7 @@ void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp)
 	match_var = NULL;
 	find_var = NULL;
 	if (if_export_variable(input))
-		process_var_val_export(head, input, var_node, envp);
+		process_var_val_export(head, input, var_node);
 	else if (!if_export_variable(input) && ft_strchr(input, '='))
 	{
 		if (ft_list_size(head) > 0)

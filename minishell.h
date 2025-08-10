@@ -100,6 +100,7 @@ void	skip_whitespace(t_parser *parse);
 void	add_cmdlist_back(t_cmdlist **head, t_cmdlist *cmd_node);
 void	clean_cmdlist(t_cmdlist **head);
 //var_list.c
+void	create_var_list(t_varlist **head, char *input);
 void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp);
 int		is_valide_varname(char *input);
 //var_list_utils.c
@@ -152,7 +153,7 @@ int		check_infile_permission(t_parser *parser, char *infile);
 int		check_outfile_permission(t_parser *parser, char *outfile);
 //build_in.c
 int		if_buildin(char *cmd);
-int		execute_builtin(t_command *cmd_node, char **ev);
+int		execute_builtin(t_varlist **head_var, t_command *cmd_node, char **ev);
 //execute_cmd.c
 void	execute_cmd(t_command *cmd, char **ev);
 void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data);
@@ -165,7 +166,8 @@ int		execute_here_doc(t_cmdlist **head_cmd, t_pipex *pipe_data);
 //get_next_line.c
 char	*get_next_line(int fd);
 //count_size_of_envp.c
-void	export_vars(t_varlist **head, char **envp);
+void	set_varlist_exported(t_varlist **head_var);
 int		count_size_of_envp(char **envp);
+void	print_all_variable_in_list(t_varlist **head);
 
 #endif
