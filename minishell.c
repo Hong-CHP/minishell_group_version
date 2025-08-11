@@ -76,16 +76,6 @@ t_parser	*init_parser(char *input)
 void	print_fill_result(t_varlist **head_var, t_cmdlist **head_cmd, t_token **tok)
 {
 	(void)head_var;
-	// t_varlist *cur_var;
-	// cur_var = *head_var;
-	// while(cur_var)
-	// {
-	// 	if (cur_var->var_data)
-	// 		printf("cur_var data var: %s (val: %s)\n", cur_var->var_data->var, cur_var->var_data->val);
-	// 	else
-	// 		printf("cur_var node has null data\n");
-	// 	cur_var = cur_var->next;
-	// }
 	t_cmdlist *cur;
 	cur = *head_cmd;
 	int pipe = 0;
@@ -163,16 +153,16 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 
 	if (!input || !*input)
 		return ;
-	t_varlist *cur_var;
-	cur_var = *head_var;
-	while(cur_var)
-	{
-		if (cur_var->var_data)
-			printf("cur_var data var: %s (val: %s)\n", cur_var->var_data->var, cur_var->var_data->val);
-		else
-			printf("cur_var node has null data\n");
-		cur_var = cur_var->next;
-	}
+	// t_varlist *cur_var;
+	// cur_var = *head_var;
+	// while(cur_var)
+	// {
+	// 	if (cur_var->var_data)
+	// 		printf("cur_var data var: %s (val: %s)\n", cur_var->var_data->var, cur_var->var_data->val);
+	// 	else
+	// 		printf("cur_var node has null data\n");
+	// 	cur_var = cur_var->next;
+	// }
 	if (ft_strchr(input, '=') || if_export_variable(input))
 	{
 		create_var_list_or_find_node(head_var, input, envp);

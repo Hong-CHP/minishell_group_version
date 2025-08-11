@@ -125,6 +125,6 @@ void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_dat
 	else
 	{
 		waitpid(pid, &status, 0);
-		update_exit_status(&status);
+		update_exit_status(status);
 	}
 }

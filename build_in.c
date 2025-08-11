@@ -53,21 +53,21 @@ int		execute_builtin(t_varlist **head_var, t_command *cmd_node, char **ev)
 	(void)ev;
 	if (!cmd_node || !cmd_node->args)
 		return (0);
-	// if (ft_strcmp(cmd_node->args[0], "cd") == 0)
-	// 	return (builtin_cd(cmd_node));
-	// if (ft_strcmp(cmd_node->args[0], "echo") == 0)
-	// 	return (builtin_echo(cmd_node));
+	if (ft_strcmp(cmd_node->args[0], "cd") == 0)
+		return (builtin_cd(cmd_node));
+	if (ft_strcmp(cmd_node->args[0], "echo") == 0)
+		return (builtin_echo(cmd_node));
 	if (ft_strcmp(cmd_node->args[0], "unset") == 0)
 	{
 		if (!cmd_node->args[1] || cmd_node->args[1][0] == '\0')
 			return (0);
 		return (builtin_unset(head_var, cmd_node));
 	}
-	// if (ft_strcmp(cmd_node->args[0], "env") == 0)
-	// 	return (builtin_env(cmd_node, ev));
+	if (ft_strcmp(cmd_node->args[0], "env") == 0)
+		return (builtin_env(ev));
 	// if (ft_strcmp(cmd_node->args[0], "exit") == 0)
 	// 	return (builtin_exit(cmd_node));
-	// if (ft_strcmp(cmd_node->args[0], "pwd") == 0)
-	// 	return (builtin_pwd());
+	if (ft_strcmp(cmd_node->args[0], "pwd") == 0)
+		return (builtin_pwd());
 	return (1);
 }

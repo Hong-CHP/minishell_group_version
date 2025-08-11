@@ -91,6 +91,7 @@ void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp)
 	char		*match_var;
 	char		*find_var;
 	t_variable  *var_node;
+	(void)envp;
 
 	var_node = NULL;
 	match_var = NULL;

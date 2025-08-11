@@ -11,7 +11,7 @@
 # include <readline/history.h>
 # include <sys/wait.h>
 
-// extern volatile sig_atomic_t g_signal_status;
+extern int g_exit_status;
 
 typedef enum e_tk_type 
 {
@@ -172,5 +172,11 @@ char	*get_next_line(int fd);
 void	set_varlist_exported(t_varlist **head_var);
 int		count_size_of_envp(char **envp);
 void	print_all_variable_in_list(t_varlist **head);
+//build_in_cmd.c
+int		builtin_echo(t_command *cmd);
+int		builtin_cd(t_command *cmd);
+int		builtin_pwd(void);
+int		builtin_env(char **ev);
+int		builtin_exit(t_command *cmd);
 
 #endif
