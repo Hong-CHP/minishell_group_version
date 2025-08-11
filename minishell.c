@@ -183,7 +183,7 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 		free_parser(parser);
 		return;
 	}
-	print_fill_result(head_var, &head_cmd, &(parser->tokens));
+	// print_fill_result(head_var, &head_cmd, &(parser->tokens));
 	pipe_data = malloc(sizeof(t_pipex));
 	if (!pipe_data)
 	{
