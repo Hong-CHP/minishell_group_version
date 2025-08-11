@@ -1,29 +1,8 @@
 #include "minishell.h"
 #include "libft.h"
 
-int	wait_child_process(void)
-{
-	int	last_status;
-	int	new_status;
-
-	last_status = 0;
-	while (wait(&new_status) > 0)
-	{
-		if (WIFEXITED(new_status))
-			last_status = WEXITSTATUS(new_status);
-		else if (WIFSIGNALED(new_status))
-		{
-			last_status = 128 + WTERMSIG(new_status);
-			if (last_status == 130)
-				ft_putchar_fd('\n', 1);
-		}
-	}
-	return (last_status);
-}
-
 void	child_process(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 {
-	printf("DEBUG: Child FD - input=%d, output=%d\n", pipe_data->f_fds[0], pipe_data->f_fds[1]);
 	if (cur == *head_cmd && pipe_data->f_fds[0] != -1)
 	{
 		dup2(pipe_data->f_fds[0], 0);
@@ -92,6 +71,26 @@ void	fork_and_pid(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 		parent_process(cur, pipe_data);
 }
 
+int	wait_child_process(void)
+{
+	int	last_status;
+	int	new_status;
+
+	last_status = 0;
+	while (wait(&new_status) > 0)
+	{
+		if (WIFEXITED(new_status))
+			last_status = WEXITSTATUS(new_status);
+		else if (WIFSIGNALED(new_status))
+		{
+			last_status = 128 + WTERMSIG(new_status);
+			if (last_status == 130)
+				ft_putchar_fd('\n', 1);
+		}
+	}
+	return (last_status);
+}
+
 void	execute_pipeline(t_cmdlist **head_cmd, t_pipex *pipe_data)
 {
 	t_cmdlist	*cur;
@@ -102,5 +101,5 @@ void	execute_pipeline(t_cmdlist **head_cmd, t_pipex *pipe_data)
 		fork_and_pid(head_cmd, cur, pipe_data);
 		cur = cur->next;
 	}
-	wait_child_process();
+	g_exit_status = wait_child_process();
 }

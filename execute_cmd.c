@@ -85,28 +85,27 @@ void	execute_cmd(t_command *cmd, char **ev)
 	fprintf(stderr, "exe_path is %s\n", exe_path);
 	if (!exe_path)
 	{
-		perror("No vailable command or path");
+		perror(cmd->args[0]);
 		exit (127);
 	}
-	if (exe_path)
-	{
-		execve(exe_path, cmd->args, ev);
-		perror("Error executions");
-		free(exe_path);
-		exit(126);
-	}
+	execve(exe_path, cmd->args, ev);
+	perror("Error executions");
 	free(exe_path);
+	exit(126);
 }
 
 void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data)
 {
 	(void)head_cmd;
 	pid_t pid;
+	int		status;
 
 	pid = fork();
+	status = 0;
 	if (pid < 0)
 	{
 		perror("fork failed");
+		g_exit_status = 1;
 		return ;
 	}
 	if (pid == 0)
@@ -124,5 +123,8 @@ void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_dat
 		execute_cmd(cmd, pipe_data->envp);
 	}
 	else
-		waitpid(pid, NULL, 0);
+	{
+		waitpid(pid, &status, 0);
+		update_exit_status(&status);
+	}
 }

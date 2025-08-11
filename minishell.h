@@ -88,6 +88,8 @@ typedef struct s_pipex
 	char	**envp;
 }				t_pipex;
 
+extern int g_exit_status;
+
 //readline_utils.c
 int		has_unclosed_quote(char *input);
 //minishell.c
@@ -158,6 +160,7 @@ int		execute_builtin(t_varlist **head_var, t_command *cmd_node, char **ev);
 void	execute_cmd(t_command *cmd, char **ev);
 void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data);
 //execute_cmd_utils.c
+void	update_exit_status(int status);
 int		if_slash(char *str);
 char	**find_sign_then_split(char *str);
 void	free_split(char **strs);

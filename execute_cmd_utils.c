@@ -1,6 +1,20 @@
 #include "minishell.h"
 #include "libft.h"
 
+void	update_exit_status(int status)
+{
+	if (WIFEXITED(status))
+		g_exit_status = WEXITSTATUS(status);
+	else if (WIFSIGNALED(status))
+	{
+		g_exit_status = 128 + WTERMSIG(status);
+		if (g_exit_status == 130)
+			ft_putchar_fd('\n', 1);
+	}
+	else
+		g_exit_status = 1;
+}
+
 int	if_slash(char *str)
 {
 	int	i;
