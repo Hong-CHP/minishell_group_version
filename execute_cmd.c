@@ -78,8 +78,12 @@ void	execute_cmd(t_command *cmd, char **ev)
 {
 	char	*exe_path;
 
-	if (if_slash(cmd->args[0]) > 0 && access(cmd->args[0], X_OK) == 0)
-		exe_path = ft_strdup(cmd->args[0]);
+	exe_path = NULL;
+	if (if_slash(cmd->args[0]) > 0)
+	{
+		if (access(cmd->args[0], X_OK) == 0)
+			exe_path = ft_strdup(cmd->args[0]);
+	}
 	else
 		exe_path = find_exe_path(cmd->args, ev);
 	fprintf(stderr, "exe_path is %s\n", exe_path);
@@ -88,10 +92,13 @@ void	execute_cmd(t_command *cmd, char **ev)
 		perror(cmd->args[0]);
 		exit (127);
 	}
-	execve(exe_path, cmd->args, ev);
-	perror("Error executions");
-	free(exe_path);
-	exit(126);
+	if (exe_path)
+	{
+		execve(exe_path, cmd->args, ev);
+		perror("Error executions");
+		free(exe_path);
+		exit(126);
+	}
 }
 
 void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data)
