@@ -23,7 +23,8 @@ void	child_process(t_varlist **head_var, t_cmdlist **head_cmd, t_cmdlist *cur, t
 		dup2(pipe_data->pipefd[1], 1);
 		close(pipe_data->pipefd[1]);
 	}
-	close(pipe_data->pipefd[0]);
+	if (pipe_data->pipefd[0] != -1)
+		close(pipe_data->pipefd[0]);
 	execute_cmd(head_var, cur->command, pipe_data->envp);
 }
 
@@ -39,10 +40,7 @@ void	parent_process(t_cmdlist *cur, t_pipex *pipe_data)
 	else
 	{
 		if (pipe_data->pipefd[0] != -1)
-		{
-			printf("i will close input pipe if it still here\n");
 			close(pipe_data->pipefd[0]);
-		}
 	}
 }
 
