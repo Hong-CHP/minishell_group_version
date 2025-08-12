@@ -134,7 +134,10 @@ void	execute_cmd_or_cmds(t_varlist **head_var, t_cmdlist **head_cmd, t_pipex	*pi
 			if(!get_in_out_files_fd(head_cmd, pipe_data))
 				return ;
 		}
-		execute_single_cmd(head_var, head_cmd, (*head_cmd)->command, pipe_data);
+		if (if_buildin((*head_cmd)->command->cmd))
+			execute_builtin(head_var, (*head_cmd)->command, pipe_data->envp);
+		else
+			execute_single_cmd(head_var, head_cmd, (*head_cmd)->command, pipe_data);
 		if ((*head_cmd)->command->here_doc == 1)
 			unlink("here.txt");
 	}

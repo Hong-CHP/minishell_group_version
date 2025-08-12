@@ -7,8 +7,8 @@ int		if_buildin(char *cmd)
 		return (0);
 	if (ft_strcmp(cmd, "cd") == 0)
 		return (1);
-	if (ft_strcmp(cmd, "echo") == 0)
-		return (1);
+	// if (ft_strcmp(cmd, "echo") == 0)
+	// 	return (1);
 	if (ft_strcmp(cmd, "unset") == 0)
 		return (1);
 	if (ft_strcmp(cmd, "env") == 0)
@@ -55,8 +55,8 @@ int		execute_builtin(t_varlist **head_var, t_command *cmd_node, char **ev)
 		return (0);
 	if (ft_strcmp(cmd_node->args[0], "cd") == 0)
 		return (builtin_cd(cmd_node));
-	if (ft_strcmp(cmd_node->args[0], "echo") == 0)
-		return (builtin_echo(cmd_node));
+	// if (ft_strcmp(cmd_node->args[0], "echo") == 0)
+	// 	return (builtin_echo(cmd_node));
 	if (ft_strcmp(cmd_node->args[0], "unset") == 0)
 	{
 		if (!cmd_node->args[1] || cmd_node->args[1][0] == '\0')
