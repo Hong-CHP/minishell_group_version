@@ -83,7 +83,6 @@ int 	init_registre_variable(t_variable *var_dt, char *input)
 	value = NULL;
 	if (if_export_variable(input))
 		var_dt->exported = 1;
-	printf("i am adding a variable and value %s, %s\n", var_dt->var, var_dt->val);
 	if (!verify_and_init_var_val(input, var_dt))
 		return (0);
 	if (!registre_var_val(input, var_dt, value))

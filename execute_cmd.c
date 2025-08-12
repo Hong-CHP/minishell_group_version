@@ -25,7 +25,7 @@ char	**extract_path(char **ev)
 	return (NULL);
 }
 
-char	*get_path_after_join(char **args, char	**ev_path, int i)
+char	*get_path_after_join(char **args, char **ev_path, int i)
 {
 	char	*temp;
 	char	*path;
@@ -74,34 +74,39 @@ char	*find_exe_path(char **args, char **ev)
 	return (exe_path);
 }
 
-void	execute_cmd(t_command *cmd, char **ev)
+void	execute_cmd(t_varlist **head_var, t_command *command, char **ev)
 {
 	char	*exe_path;
 
 	exe_path = NULL;
-	if (if_slash(cmd->args[0]) > 0)
+	if(if_buildin(command->cmd))
 	{
-		if (access(cmd->args[0], X_OK) == 0)
-			exe_path = ft_strdup(cmd->args[0]);
+		execute_builtin(head_var, command, ev);
+		exit (0);
+	}
+	if (if_slash(command->args[0]) > 0)
+	{
+		if (access(command->args[0], X_OK) == 0)
+			exe_path = ft_strdup(command->args[0]);
 	}
 	else
-		exe_path = find_exe_path(cmd->args, ev);
+		exe_path = find_exe_path(command->args, ev);
 	fprintf(stderr, "exe_path is %s\n", exe_path);
 	if (!exe_path)
 	{
-		perror(cmd->args[0]);
+		perror(command->args[0]);
 		exit (127);
 	}
 	if (exe_path)
 	{
-		execve(exe_path, cmd->args, ev);
+		execve(exe_path, command->args, ev);
 		perror("Error executions");
 		free(exe_path);
 		exit(126);
 	}
 }
 
-void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data)
+void	execute_single_cmd(t_varlist **head_var, t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data)
 {
 	(void)head_cmd;
 	pid_t pid;
@@ -127,7 +132,7 @@ void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_dat
 			dup2(pipe_data->f_fds[1], 1);
 			close(pipe_data->f_fds[1]);
 		}
-		execute_cmd(cmd, pipe_data->envp);
+		execute_cmd(head_var, cmd, pipe_data->envp);
 	}
 	else
 	{

@@ -145,7 +145,7 @@ int		handle_word(t_parser *p, char **args, int *argc);
 int		is_cmd_token(int type);
 int		set_error(t_parser *p);
 //pipex.c
-void	execute_pipeline(t_cmdlist **head_cmd, t_pipex *pipe_data);
+void	execute_pipeline(t_varlist **head_var, t_cmdlist **head_cmd, t_pipex *pipe_data);
 //pipex_utils.c
 int		if_pipex(t_cmdlist **head_cmd);
 t_pipex	*init_pipe_data(t_pipex *pipe_data, char **envp);
@@ -157,8 +157,8 @@ int		check_outfile_permission(t_parser *parser, char *outfile);
 int		if_buildin(char *cmd);
 int		execute_builtin(t_varlist **head_var, t_command *cmd_node, char **ev);
 //execute_cmd.c
-void	execute_cmd(t_command *cmd, char **ev);
-void	execute_single_cmd( t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data);
+void	execute_cmd(t_varlist **head_var, t_command *command, char **ev);
+void	execute_single_cmd(t_varlist **head_var, t_cmdlist **head_cmd, t_command *cmd, t_pipex *pipe_data);
 //execute_cmd_utils.c
 void	update_exit_status(int status);
 int		if_slash(char *str);

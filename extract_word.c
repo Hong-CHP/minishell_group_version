@@ -50,6 +50,12 @@ char	*get_word(t_parser *parser, int start, t_varlist **head_var)
 		}
 		printf("word after replaced is: %s\n", word);
 	}
+	if (if_dollar_sign(word) > 0)
+	{
+		tmp = word;
+		word = reg_dollar_sign(word, head_var);
+		free(tmp);
+	}
 	return (word);
 }
 
