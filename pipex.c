@@ -1,7 +1,7 @@
 #include "minishell.h"
 #include "libft.h"
 
-void	child_process(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
+void	child_process(t_varlist **head_var, t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 {
 	if (cur == *head_cmd && pipe_data->f_fds[0] != -1)
 	{
@@ -24,11 +24,7 @@ void	child_process(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 		close(pipe_data->pipefd[1]);
 	}
 	close(pipe_data->pipefd[0]);
-	if(if_buildin(cur->command->cmd))
-	{}
-		// execute_builtin(cur->command, pipe_data->envp);
-	else
-		execute_cmd(cur->command, pipe_data->envp);
+	execute_cmd(head_var, cur->command, pipe_data->envp);
 }
 
 void	parent_process(t_cmdlist *cur, t_pipex *pipe_data)
@@ -42,7 +38,7 @@ void	parent_process(t_cmdlist *cur, t_pipex *pipe_data)
 	}
 }
 
-void	fork_and_pid(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
+void	fork_and_pid(t_varlist **head_var, t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 {
 	pid_t		pid;
 
@@ -65,7 +61,7 @@ void	fork_and_pid(t_cmdlist **head_cmd, t_cmdlist *cur, t_pipex *pipe_data)
 	if (pid == 0)
 	{
 		signal(SIGINT, SIG_DFL);
-		child_process(head_cmd, cur, pipe_data);
+		child_process(head_var, head_cmd, cur, pipe_data);
 	}
 	else
 		parent_process(cur, pipe_data);
@@ -91,14 +87,14 @@ int	wait_child_process(void)
 	return (last_status);
 }
 
-void	execute_pipeline(t_cmdlist **head_cmd, t_pipex *pipe_data)
+void	execute_pipeline(t_varlist **head_var, t_cmdlist **head_cmd, t_pipex *pipe_data)
 {
 	t_cmdlist	*cur;
 
 	cur = *head_cmd;
 	while (cur)
 	{
-		fork_and_pid(head_cmd, cur, pipe_data);
+		fork_and_pid(head_var, head_cmd, cur, pipe_data);
 		cur = cur->next;
 	}
 	g_exit_status = wait_child_process();
