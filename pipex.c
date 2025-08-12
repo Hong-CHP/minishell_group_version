@@ -8,7 +8,7 @@ void	child_process(t_varlist **head_var, t_cmdlist **head_cmd, t_cmdlist *cur, t
 		dup2(pipe_data->f_fds[0], 0);
 		close(pipe_data->f_fds[0]);
 	}
-	else
+	else if (pipe_data->prev_pipe != -1)
 	{
 		dup2(pipe_data->prev_pipe, 0);
 		close(pipe_data->prev_pipe);
@@ -18,7 +18,7 @@ void	child_process(t_varlist **head_var, t_cmdlist **head_cmd, t_cmdlist *cur, t
 		dup2(pipe_data->f_fds[1], 1);
 		close(pipe_data->f_fds[1]);
 	}
-	else
+	else if (cur->next != NULL)
 	{
 		dup2(pipe_data->pipefd[1], 1);
 		close(pipe_data->pipefd[1]);
@@ -35,6 +35,14 @@ void	parent_process(t_cmdlist *cur, t_pipex *pipe_data)
 	{
 		close(pipe_data->pipefd[1]);
 		pipe_data->prev_pipe = pipe_data->pipefd[0];
+	}
+	else
+	{
+		if (pipe_data->pipefd[0] != -1)
+		{
+			printf("i will close input pipe if it still here\n");
+			close(pipe_data->pipefd[0]);
+		}
 	}
 }
 
@@ -92,6 +100,7 @@ void	execute_pipeline(t_varlist **head_var, t_cmdlist **head_cmd, t_pipex *pipe_
 	t_cmdlist	*cur;
 
 	cur = *head_cmd;
+	printf("pipe_data fd = %d, %d\n", pipe_data->f_fds[0], pipe_data->f_fds[1]);
 	while (cur)
 	{
 		fork_and_pid(head_var, head_cmd, cur, pipe_data);
