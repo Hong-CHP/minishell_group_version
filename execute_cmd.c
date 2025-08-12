@@ -77,12 +77,12 @@ char	*find_exe_path(char **args, char **ev)
 void	execute_cmd(t_varlist **head_var, t_command *command, char **ev)
 {
 	char	*exe_path;
-
+	(void)head_var;
 	exe_path = NULL;
-	if(if_buildin(command->cmd))
+	if(ft_strcmp(command->args[0], "echo") == 0)
 	{
-		execute_builtin(head_var, command, ev);
-		exit (0);
+		builtin_echo(command);
+		exit(0);
 	}
 	if (if_slash(command->args[0]) > 0)
 	{
