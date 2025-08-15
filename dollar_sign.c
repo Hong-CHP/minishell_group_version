@@ -8,7 +8,8 @@ int	calc_pos_length_of_var(char *str, int j, int *pos_after_dollar)
 
 	k = 0;
 	len = 0;
-	while (str[j] && str[j] != ' ' && str[j] != ',' && str[j] != '$')
+	while (str[j] && str[j] != ' ' && str[j] != ',' && str[j] != '$'
+			&& str[j] != '\\' && str[j] != '\'' && str[j] != '"')
 	{
 		if (str[j] == '{')
 		{
@@ -58,12 +59,12 @@ char	**find_dollar_sign(char *str, int nb_var)
 	k = 0;
 	while(str[i])
 	{
-		if (str[i] == '$')
+		if (str[i] == '$' && str[i + 1] && 
+			(ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 		{
 			vars[k] = fill_multi_vars(str, i);
 			if (!vars[k])
 				free_vars_vals(vars, NULL);
-			printf("vars after dollar sign is %s\n", vars[k]);
 			k++;
 		}
 		i++;
@@ -99,20 +100,24 @@ char *check_same_var_in_varlist(char *var, t_varlist **head_var)
 int    get_vals_and_tot_len(char *str, char **vals, char **vars, t_varlist **head_var)
 {
     int i;
-    int len;
+    size_t vars_len;
+    size_t vals_len;
     int t_len;
 
     i = 0;
-    len = 0;
+    vars_len = 0;
+    vals_len = 0;
     while (vars[i])
     {
+		vars_len += ft_strlen(vars[i]);
         vals[i] = check_same_var_in_varlist(vars[i], head_var);
-        len += ft_strlen(vals[i]);
+		if (!vals[i])
+			vals[i] = ft_strdup("");
+        vals_len += ft_strlen(vals[i]);
         i++;
     }
     vals[i] = NULL;
-    t_len = real_length_of_word(str, len);
-    printf("vals length is : %d, word real total length is: %d\n", len, t_len);
+	t_len = ft_strlen(str) - if_dollar_sign(str) - vars_len + vals_len;
     return (t_len);
 }
 
@@ -128,9 +133,8 @@ void    fill_words_with_real_vals(char *word, char *str, char **vars, char **val
     j = 0;
     while(j < t_len)
     {
-        if (str[i] == '\'' || str[i] == '\"')
-			i++;
-        if (str[i] == '$')
+        if (str[i] == '$' && str[i + 1]
+			&& str[i + 1] != '$')
         {
             i++;
 			if (str[i] == '{')
@@ -183,6 +187,7 @@ char	*reg_dollar_sign(char *str, t_varlist **head_var)
 		return (NULL);
 	}
 	fill_words_with_real_vals(word, str, vars, vals, t_len);
+	printf("word after replaced is : %s\n", word);
 	free_vars_vals(vars, vals);
 	return (word);
 }
