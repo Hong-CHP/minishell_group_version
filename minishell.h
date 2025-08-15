@@ -118,7 +118,12 @@ int		if_quote(char *str);
 //var_val.c
 int 	init_registre_variable(t_variable *var_dt, char *input);
 //extract_cmd_utils.c
+int		if_slash_trans(char *str);
+char	*find_words_in_single_quote(char *content, char ch);
 char	*find_words_in_quote(char *content, char ch);
+char	*find_words_in_slash(char *content);
+char	*copy_str_without_slash(char *dest, char *src, int len);
+char	*dup_str_without_slash(char *src, int len);
 //tokenize.c
 t_token	*tokenize(t_parser *parser, t_varlist **head_var);
 t_token *create_token(t_tk_type type, char *value);
@@ -136,7 +141,6 @@ char	*reg_dollar_sign(char *str, t_varlist **head_var);
 int		if_dollar_sign(char *str);
 int		is_varname_format(char *str);
 void	free_vars_vals(char **vars, char **vals);
-int		real_length_of_word(char *str, int vals_len);
 //process_token.c
 int		is_cmd_token(int type);
 int		process_token(t_parser *p, t_cmdlist *cmd);

@@ -72,8 +72,8 @@ void	read_the_line(char *input, t_varlist **head_var, char **envp)
 			rl_clear_history(); 
 		else if (*input)
 		{
-			if(!read_content_unclose_quote(&input))
-				break ;
+			// if(has_unclosed_quote(input))
+			// 	break ;
 			add_history(input);
 			minishell(input, head_var, envp);
 		}

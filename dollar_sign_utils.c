@@ -20,37 +20,6 @@ void	free_vars_vals(char **vars, char **vals)
 	vals = NULL;
 }
 
-int	real_length_of_word(char *str, int vals_len)
-{
-	int	i;
-	int	len;
-
-	i = 0;
-	len = 0;
-	while(str[i])
-	{
-		if (str[i] == '\'' || str[i] == '\"')
-			i++;
-		if (str[i] == '$')
-		{
-			i++;
-			if (str[i] == '{')
-				i++;
-			while(ft_isalnum(str[i]) || str[i] == '_')
-				i++;
-			if (str[i] == '}')
-				i++;
-		}
-		else
-		{
-			len++;
-			i++;
-		}
-	}
-	len = len + vals_len;
-	return (len);
-}
-
 int if_dollar_sign(char *str)
 {
 	int i;
@@ -60,7 +29,9 @@ int if_dollar_sign(char *str)
 	i = 0;
 	while (str[i])
 	{
-		if (str[i] == '$')
+		if (str[i] && str[i + 1] &&
+			str[i] == '$' && 
+			(ft_isalnum(str[i + 1]) || str[i + 1] == '_'))
 			count++;
 		i++;
 	}
@@ -97,7 +68,8 @@ int	is_varname_format(char *str)
 	if (!ft_isalpha(str[i]) && str[i] != '_')
 		return (0);
 	i++;
-	while (str[i] && str[i] != ' ' && str[i] != ',' && str[i] != '$')
+	while (str[i] && str[i] != ' ' && str[i] != ',' && str[i] != '$'
+			&& str[i] != '\\' && str[i] != '\'' && str[i] != '"')
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_')
 			return (0);
