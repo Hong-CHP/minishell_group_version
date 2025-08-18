@@ -1,5 +1,6 @@
 #include "minishell.h"
 #include "libft.h"
+#include <string.h>
 
 char	*extract_if_slash(char *buf, t_parser *parser, int *len)
 {
@@ -14,16 +15,13 @@ char	*extract_if_slash(char *buf, t_parser *parser, int *len)
 	return (buf);
 }
 
-char	*extract_if_single_quote(char *buf, t_parser *parser, int *len, int *dollar)
+char	*extract_if_single_quote(char *buf, t_parser *parser, int *len, int *s_quot)
 {
 	parser->pos++;
+	*s_quot = parser->pos;
 	while (parser->input[parser->pos]
 		&& parser->input[parser->pos] != '\'')
-	{
-		if (parser->input[parser->pos] == '$')
-			(*dollar)++;
 		buf[(*len)++] = parser->input[parser->pos++];
-	}
 	if (parser->input[parser->pos] == '\'')
 	{
 		parser->pos++;
@@ -46,7 +44,7 @@ char	*extract_if_double_quote(char *buf, t_parser *parser, int *len)
 			&& (parser->input[parser->pos + 1] == '"'
 				|| parser->input[parser->pos + 1] == '\\'
 				|| parser->input[parser->pos + 1] == '$'))
-			parser->pos ++;
+			parser->pos++;
 		buf[(*len)++] = parser->input[parser->pos++];
 	}
 	if (parser->input[parser->pos] == '"')
@@ -60,177 +58,141 @@ char	*extract_if_double_quote(char *buf, t_parser *parser, int *len)
 }
 
 
-char	*extract_word(t_parser *parser, t_varlist **head_var)
+void	update_dollar_inside_single_quotes(t_parser *parser, int s_quot, int e_quot, int *dollar)
 {
-	char	*buf;
-	int		len;
-	char	c;
-	int		start_double;
-	int		end_double;
-	int		start_single;
-	int		end_single;
-	int		dollar;
-	
-	buf = malloc(sizeof(char) * (ft_strlen(parser->input) + 1));
-	if (!buf)
-		return (NULL);
-	len = 0;
-	dollar = 0;
-	while (parser->input[parser->pos] && 
-		   parser->input[parser->pos] != ' ' && 
-		   parser->input[parser->pos] != '\t' && 
-		   parser->input[parser->pos] != '\n' && 
-		   parser->input[parser->pos] != '|' && 
-		   parser->input[parser->pos] != '<' && 
-		   parser->input[parser->pos] != '>' && 
-		   parser->input[parser->pos] != '&' && 
-		   parser->input[parser->pos] != ';' && 
-		   parser->input[parser->pos] != '(' && 
-		   parser->input[parser->pos] != ')')
+	int	i;
+
+	i = s_quot;
+	while (i < e_quot)
 	{
-		c = parser->input[parser->pos];
-		if (c == '\\')
+		if (parser->input[i] == '$')
+			(*dollar)++;
+		i++;
+	}
+}
+
+char	*join_back_content_after_quote(t_varlist **head_var, char *pos_after, int len, char *joined)
+{
+	char	*tmp;
+	char	*back;
+
+	tmp = NULL;
+	back = ft_substr(pos_after, len, ft_strlen(pos_after) - len);
+	if (ft_strchr(back, '$'))
+	{
+		tmp = back;
+		back = reg_dollar_sign(tmp, head_var);
+		free(tmp);
+	}
+	tmp = joined;
+	joined = ft_strjoin(tmp, back);
+	free(tmp);
+	free(back);
+	return (joined);
+}
+
+char	*when_dollar_inside_single_quote(char *buf, char *part, t_varlist **head)
+{
+	char	*pos_after_qt;
+	int		len_in_qt;
+	char	*front;
+	char	*tmp;
+	char	*joined;
+
+	tmp = NULL;
+	pos_after_qt = ft_strnstr(buf, part, ft_strlen(buf));
+	printf("actually pos str is : %s\n", pos_after_qt);
+	len_in_qt = ft_strlen(part);
+	front = ft_substr(buf, 0, pos_after_qt - buf);
+	if (ft_strchr(front, '$'))
+	{
+		tmp = front;
+		front = reg_dollar_sign(tmp, head);
+		free(tmp);
+	}
+	joined = ft_strjoin(front, part);
+	free(front);
+	free(part);
+	printf("new content is %s\n", joined);
+	if (*(pos_after_qt + len_in_qt))
+		joined = join_back_content_after_quote(head, pos_after_qt, len_in_qt, joined);
+	printf("joined is actually: %s\n", joined);
+	return (joined);
+}
+
+int is_separator(char c)
+{
+    return (c == ' '  || c == '\t' || c == '\n' ||
+            c == '|'  || c == '<'  || c == '>'  ||
+            c == '&'  || c == ';'  ||
+            c == '('  || c == ')');
+}
+
+char	*extract_by_type_sign(char *buf, t_parser *parser, int *s_quot, int *e_quot)
+{
+	int		len;
+
+	len = 0;
+	while (parser->input[parser->pos] && !is_separator(parser->input[parser->pos]))
+	{
+		if (parser->input[parser->pos] == '\\')
 		{
-			printf("pos of slash start: %ld\n", parser->pos);
 			if(!extract_if_slash(buf, parser, &len))
-			{
-				free(buf);
 				return (NULL);
-			}
-			printf("pos of slash end: %ld\n", parser->pos);
 		}
-		else if (c == '\'')
+		else if (parser->input[parser->pos] == '\'')
 		{
-			start_single = parser->pos;
-			printf("pos of single quote start: %d\n", start_single);
-			if(!extract_if_single_quote(buf, parser, &len, &dollar))
-			{
-				free(buf);
+			if(!extract_if_single_quote(buf, parser, &len, s_quot))
 				return (NULL);
-			}
-			end_single = parser->pos;
-			if (dollar)
-				printf("dollar %d sign existant in paire of single quote\n", dollar);
-			printf("pos of single quote end: %d\n", end_single);
+			*e_quot = parser->pos - 1;
 		}
-		else if (c == '"')
+		else if (parser->input[parser->pos] == '"')
 		{
-			start_double = parser->pos;
-			printf("pos of double quote start: %d\n", start_double);
-			if(!extract_if_double_quote(buf, parser, &len))
-			{
-				free(buf);
+			if (!extract_if_double_quote(buf, parser, &len))
 				return (NULL);
-			}
-			end_double = parser->pos;
-			printf("pos of double quote end: %d\n", end_double);
 		}
 		else
 			buf[len++] = parser->input[parser->pos++];
 	}
 	buf[len] = '\0';
-	printf("parser->input is : %s\n", parser->input);
-	printf("buf is : %s\n", buf);
-	if (ft_strchr(parser->input, '$')
-		&& (*(ft_strchr(parser->input, '$') - 1) != '\\')
-		&& ft_strchr(buf, '$') && dollar == 0)
+	return (buf);
+}
+
+char *handle_single_quote_dollar(char *buf, char *input, int doll_quot[3], t_varlist **head_var)
+{
+	char	*part;
+	char	*tmp;
+	
+	part = ft_substr(input, doll_quot[0], doll_quot[1] - doll_quot[0]);
+	if (!part)
+		return (NULL);
+	tmp = when_dollar_inside_single_quote(buf, part, head_var);
+	free(buf);
+	if (!tmp)
+		return (NULL);
+	return tmp;
+}
+
+char *extract_word(t_parser *parser, t_varlist **head_var)
+{
+	char	*buf;
+	char	*tmp;
+	int		doll_quot[3];
+
+	buf = malloc(sizeof(char) * (ft_strlen(parser->input) + 1));
+	if (!buf)
+		return (NULL);
+	ft_memset(doll_quot, 0, sizeof(doll_quot));
+	if (!extract_by_type_sign(buf, parser, &doll_quot[0], &doll_quot[1]))
+		return (NULL);
+	update_dollar_inside_single_quotes(parser, doll_quot[0], doll_quot[1], &doll_quot[2]);
+	if (doll_quot[0] && doll_quot[1] && doll_quot[2] > 0)
+		buf = handle_single_quote_dollar(buf, parser->input, doll_quot, head_var);
+	else if (ft_strchr(buf, '$') && doll_quot[2] == 0)
 	{
-		char *tmp = buf;
+		tmp = buf;
 		buf = reg_dollar_sign(tmp, head_var);
 		free(tmp);
 	}
 	return (buf);
 }
-
-// char	*get_word(t_parser *parser, int start, t_varlist **head_var)
-// {
-// 	int		len;
-// 	char	*word;
-// 	char	*tmp;
-// 	// char	ch;
-
-// 	len = parser->pos - start;
-// 	printf("the parser->pos is: %ld, the start is %d\n", parser->pos, start);
-// 	if (len == 0)
-// 		return (NULL);
-// 	word = malloc(sizeof(char) * (len + 1));
-// 	if (!word)
-// 		return (NULL);
-// 	ft_strlcpy(word, &parser->input[start], len + 1);
-// 	printf("actually the word is: %s\n", word);
-	// ch = get_sign_in_the_word(word);
-	// printf("actually the sign is: %c\n", ch);
-	// if (ch == '\\' && if_slash_trans(word) == 1 
-	// 	&& word[ft_strlen(word) - 1] != word[0])
-	// {
-	// 	printf("iicicicici\n");
-	// 	tmp = word;
-	// 	word = dup_str_without_slash(tmp, ft_strlen(word));
-	// 	if (!word)
-	// 	{
-	// 		free(tmp);
-	// 		return (NULL);
-	// 	}
-	// 	free(tmp);
-	// }
-	// else if (ch == '\'')
-	// {
-	// 	tmp = word;
-	// 	word = find_words_in_single_quote(tmp, '\'');
-	// 	if (!word)
-	// 	{
-	// 		free(tmp);
-	// 		return (NULL);
-	// 	}
-	// 	free(tmp);
-	// }
-	// else if (ch == '\"')
-	// else if (word[0] == '\\' && word[ft_strlen(word) - 2] == '\\')
-	// {
-	// 	tmp = word;
-	// 	word = find_words_in_slash(tmp);
-	// 	if (!word)
-	// 	{
-	// 		free(tmp);
-	// 		return (NULL);
-	// 	}
-	// 	free(tmp);
-	// }
-	// else if (word[0] == '\'' && word[ft_strlen(word) - 1] == '\'')
-	// {
-	// 	tmp = word;
-	// 	word = find_words_in_single_quote(tmp, '\'');
-	// 	if (!word)
-	// 	{
-	// 		free(tmp);
-	// 		return (NULL);
-	// 	}
-	// 	free(tmp);
-	// }
-	// else if (word[0] == '"' && word[ft_strlen(word) - 1] == '"')
-	// {
-	// 	tmp = word;
-	// 	word = find_words_in_quote(tmp, '"');
-	// 	if (!word)
-	// 	{
-	// 		free(tmp);
-	// 		return (NULL);
-	// 	}
-	// 	free(tmp);
-	// 	printf("find in quote, the word is: %s\n", word);
-	// 	if (if_dollar_sign(word) > 0)
-	// 	{
-	// 		tmp = word;
-	// 		word = reg_dollar_sign(word, head_var);
-	// 		free(tmp);
-	// 	}
-	// 	printf("word after replaced is: %s\n", word);
-	// }
-	// if (if_dollar_sign(word) > 0)
-	// {
-	// 	tmp = word;
-	// 	word = reg_dollar_sign(word, head_var);
-	// 	free(tmp);
-	// }
-// 	return (word);
-// }

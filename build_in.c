@@ -13,8 +13,8 @@ int		if_buildin(char *cmd)
 		return (1);
 	if (ft_strcmp(cmd, "env") == 0)
 		return (1);
-	if (ft_strcmp(cmd, "exit") == 0)
-		return (1);
+	// if (ft_strcmp(cmd, "exit") == 0)
+	// 	return (1);
 	if (ft_strcmp(cmd, "pwd") == 0)
 		return (1);
 	return (0);
@@ -65,8 +65,8 @@ int		execute_builtin(t_varlist **head_var, t_command *cmd_node, char **ev)
 	}
 	if (ft_strcmp(cmd_node->args[0], "env") == 0)
 		return (builtin_env(ev));
-	if (ft_strcmp(cmd_node->args[0], "exit") == 0)
-		return (builtin_exit(cmd_node));
+	// if (ft_strcmp(cmd_node->args[0], "exit") == 0)
+	// 	return (builtin_exit(cmd_node));
 	if (ft_strcmp(cmd_node->args[0], "pwd") == 0)
 		return (builtin_pwd());
 	return (1);

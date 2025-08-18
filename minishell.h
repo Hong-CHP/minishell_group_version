@@ -107,7 +107,7 @@ void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp);
 int		is_valide_varname(char *input);
 //var_list_utils.c
 int		if_export_variable(char *content);
-void	add_var_lst_front(t_varlist **head, t_varlist *var_node);
+void	add_var_lst_order(t_varlist **head, t_varlist *var_node);
 int		ft_list_size(t_varlist **head);
 void	clean_var_list(t_varlist **head);
 //var_control.c
@@ -115,7 +115,9 @@ char	*if_variable_var(char *input);
 char	*if_variable_val(char *input);
 //tokenize_utils.c
 int		if_quote(char *str);
+void	free_token_list(t_token **head);
 //var_val.c
+void	fill_variable_value(char *content, char *var, char *val);
 int 	init_registre_variable(t_variable *var_dt, char *input);
 //extract_cmd_utils.c
 int		if_slash_trans(char *str);
@@ -173,7 +175,9 @@ int		execute_here_doc(t_cmdlist **head_cmd, t_pipex *pipe_data);
 //get_next_line.c
 char	*get_next_line(int fd);
 //count_size_of_envp.c
+void	create_var_list_for_ev(t_varlist **head, char *input);
 void	set_varlist_exported(t_varlist **head_var);
+void	create_var_list_for_ev(t_varlist **head, char *input);
 int		count_size_of_envp(char **envp);
 void	print_all_variable_in_list(t_varlist **head);
 //build_in_cmd.c

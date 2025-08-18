@@ -73,6 +73,7 @@ t_variable	*verify_and_init_var_val(char *input, t_variable *var_dt)
 		free(var_dt->var);
 		return (NULL);
 	}
+	// printf("everything is well\n");
 	return (var_dt);
 }
 
@@ -87,5 +88,6 @@ int 	init_registre_variable(t_variable *var_dt, char *input)
 		return (0);
 	if (!registre_var_val(input, var_dt, value))
 		return (0);
+	// printf("everything is well\n");
 	return (1);
 }

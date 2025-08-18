@@ -49,10 +49,11 @@ void	create_var_list(t_varlist **head, char *input)
 	{
 		free(var_node->var_data);
 		free(var_node);
+		printf("invalid name for variable\n");
 		return ;
 	}
 	var_node->next = NULL;
-	add_var_lst_front(head, var_node);
+	add_var_lst_order(head, var_node);
 }
 
 void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node)

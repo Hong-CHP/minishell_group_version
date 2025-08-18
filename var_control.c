@@ -1,21 +1,84 @@
 #include "minishell.h"
 #include "libft.h"
 
-int		no_quote_no_space(char *str)
+int		value_has_signs(char *str)
 {
 	int	i;
 
 	i = 0;
-	if (if_quote(str) == 0)
+	while (str[i])
 	{
-		while (str[i])
-		{
-			if (str[i] == ' ')
-				return (0);
-			i++;
-		}
+		if (str[i] == '\'' || str[i] == '"' || str[i] == '\\')
+			return (1);
+		i++;
 	}
-	return(1);
+	return(0);
+}
+
+char	*extract_value_if_sign(char *value)
+{
+	char	*buf;
+	int		i;
+	int		len;
+	int		dollar;
+
+	buf = malloc(sizeof(char) * (ft_strlen(value + 1)));
+	if (!buf)
+		return (NULL);
+	len = 0;
+	while (value[i])
+	{
+		if (value[i] == '\\')
+		{
+			i++;
+			if (!value[i])
+			{
+				printf("incorrect syntaxe\n");
+				return (NULL);
+			}
+			else
+				buf[len++] = value[i++];
+		}
+		else if (value[i] == '\'')
+		{
+			i++;
+			while (value[i] && value[i] != '\'')
+			{
+				if (value[i] == '$')
+					dollar++;
+				buf[len++] = value[i++];
+			}
+			if (value[i] == '\'')
+				i++;
+			else
+			{
+				printf("incorrect syntaxe\n");
+				return (NULL);
+			}
+		}
+		else if (value[i] == '"')
+		{
+			i++;
+			while (value[i] && value[i] != '"')
+			{
+				if (value[i] == '\\' && (value[i + 1] == '"'
+					|| value[i + 1] == '$' || value[i] == '\\'))
+					i++;
+				buf[len++] = value[i++];
+			}
+			if (value[i] == '"')
+				i++;
+			else
+			{
+				printf("incorrect syntaxe\n");
+				return (NULL);
+			}
+		}
+		else
+			buf[len++] = value[i++];
+	}
+	buf[len] = '\0';
+	return (buf);
 }
 
 char	**if_val_after_equal(char *input, int i, char **val)
@@ -23,8 +86,9 @@ char	**if_val_after_equal(char *input, int i, char **val)
 	int		count_val;
 
 	count_val = 0;
-	if (!no_quote_no_space(&input[i]))
-		return (NULL);
+	printf("everything is well for input[i]: %c\n", input[i]);
+	// if (value_has_signs(&input[i]))
+	extract_value_if_sign(&input[i]);
 	while (input[i])
 	{
 		count_val++;
