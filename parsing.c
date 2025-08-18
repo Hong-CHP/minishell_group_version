@@ -97,6 +97,8 @@ t_cmdlist	*parse_pipeline(t_parser *parser, t_varlist **head_var)
 t_cmdlist	*parse_cmd_line(t_parser *parser, t_varlist **head_var)
 {
 	parser->tokens = tokenize(parser, head_var);
+	if (!parser->tokens)
+		return (NULL);
 	parser->current = parser->tokens;
 	if (parser->error)
 		return (NULL);

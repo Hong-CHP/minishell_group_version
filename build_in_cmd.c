@@ -61,18 +61,18 @@ int	builtin_env(char **ev)
 }
 
 //I think this one is fine
-int		builtin_exit(t_command *cmd)
-{
-	int	exit_code;
+// int		builtin_exit(t_command *cmd)
+// {
+// 	int	exit_code;
 
-	exit_code = 0;
-	if (cmd->argc > 1)
-	{
-		exit_code = ft_atoi(cmd->args[1]);
-	}
-	ft_putstr_fd("exit builtin\n", 1);
-	exit(exit_code);
-}
+// 	exit_code = 0;
+// 	if (cmd->argc > 1)
+// 	{
+// 		exit_code = ft_atoi(cmd->args[1]);
+// 	}
+// 	ft_putstr_fd("exit builtin\n", 1);
+// 	exit(exit_code);
+// }
 
 int		builtin_echo(t_command *cmd)
 {

@@ -80,6 +80,11 @@ t_token	*tokenize(t_parser *parser, t_varlist **head_var)
 		if (!parser->input[parser->pos] || parser->error)
 			break;
 		tok = next_token(parser, head_var);
+		if (!tok)
+		{
+			free_token_list(&head);
+			return (NULL);
+		}
 		if (parser->error && !tok)
 			return (head);
 		if (tok)
