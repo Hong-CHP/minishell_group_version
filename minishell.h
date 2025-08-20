@@ -88,6 +88,24 @@ typedef struct s_pipex
 	char	**envp;
 }				t_pipex;
 
+typedef struct s_handler_qd
+{
+	int					start_qt_input;
+	int					end_qt_input;
+	int					start_qt_buf;
+	int					end_qt_buf;
+	int					dollar;
+	char				*part;
+	struct s_handler_qd	*next;
+}				t_handler_qt;
+
+typedef struct s_no_rep_dol
+{
+	int		*start;
+	int		*end;
+	int		idx;
+}				t_no_rep_dol;
+
 extern int g_exit_status;
 
 //readline_utils.c
@@ -116,9 +134,11 @@ char	*if_variable_val(char *input);
 //tokenize_utils.c
 int		if_quote(char *str);
 void	free_token_list(t_token **head);
+char	*extract_value_if_sign(char *value, t_varlist **head_var);
 //var_val.c
 void	fill_variable_value(char *content, char *var, char *val);
-int 	init_registre_variable(t_variable *var_dt, char *input);
+int 	init_registre_variable(t_variable *var_dt, char *input, t_varlist **head_var);
+char	*extract_value(char *val, t_varlist **head_var, int ch);
 //extract_cmd_utils.c
 int		if_slash_trans(char *str);
 char	*find_words_in_single_quote(char *content, char ch);
@@ -137,6 +157,10 @@ t_token	*create_and_token(t_parser *parser);
 t_token	*create_simple_token(t_parser *parser, int type, const char *s);
 //extract_word.c
 char	*extract_word(t_parser *parser, t_varlist **head_var);
+//extract_word_utils.c
+t_handler_qt    *new_handler_node(int start);
+void    		add_handler_lst_back(t_handler_qt **handler, t_handler_qt *node);
+void    free_handler_lst(t_handler_qt **handler);
 //dollar_sign.c
 char	*reg_dollar_sign(char *str, t_varlist **head_var);
 //dollar_sign_utils.c

@@ -25,29 +25,38 @@ void	fill_variable_value(char *content, char *var, char *val)
 	val[j] = '\0';
 }
 
-char	*extract_value(char *val)
+char	*extract_value(char *val, t_varlist **head_var, int ch)
 {
 	char	*value;
-	int		ch;
 
-	if (if_quote(val) != 0 && val[0] != val[ft_strlen(val) - 1])
+	if (ch != 0 && val[0] != val[ft_strlen(val) - 1])
 		return (NULL);
-	ch = if_quote(val);
-	value = find_words_in_quote(val, ch);
+	value = extract_value_if_sign(val, head_var);
 	if (!value)
 		return (NULL);
+	printf("value after extract is: %s\n", value);
 	return (value);
 }
 
-t_variable	*registre_var_val(char *input, t_variable *var_dt, char *value)
+t_variable	*registre_var_val(char *input, t_variable *var_dt, char *value, t_varlist **head_var)
 {
+	int		ch;
+
 	if (var_dt->exported == 1)
 		fill_variable_value(&input[7], var_dt->var, var_dt->val);
 	else
 		fill_variable_value(input, var_dt->var, var_dt->val);
-	if (if_quote(var_dt->val) != 0)
+	printf("actual var node data -> val is: %s\n", var_dt->val);
+	ch = if_quote(var_dt->val);
+	if (ch == -1)
 	{
-		value = extract_value(var_dt->val);
+		printf("unclose quote\n");
+		free(var_dt->val);
+		return (NULL);
+	}
+	if (ch != 0)
+	{
+		value = extract_value(var_dt->val, head_var, ch);
 		if (!value)
 		{
 			free(var_dt->val);
@@ -73,11 +82,10 @@ t_variable	*verify_and_init_var_val(char *input, t_variable *var_dt)
 		free(var_dt->var);
 		return (NULL);
 	}
-	// printf("everything is well\n");
 	return (var_dt);
 }
 
-int 	init_registre_variable(t_variable *var_dt, char *input)
+int 	init_registre_variable(t_variable *var_dt, char *input, t_varlist **head_var)
 {
 	char	*value;
 
@@ -86,8 +94,7 @@ int 	init_registre_variable(t_variable *var_dt, char *input)
 		var_dt->exported = 1;
 	if (!verify_and_init_var_val(input, var_dt))
 		return (0);
-	if (!registre_var_val(input, var_dt, value))
+	if (!registre_var_val(input, var_dt, value, head_var))
 		return (0);
-	// printf("everything is well\n");
 	return (1);
 }

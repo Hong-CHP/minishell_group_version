@@ -161,7 +161,7 @@ void	minishell(char *input, t_varlist **head_var, char **envp)
 
 	if (!input || !*input)
 		return ;
-	if (ft_strchr(input, '=') || if_export_variable(input))
+	if ((ft_strchr(input, '=') && is_valide_varname(input)) || if_export_variable(input))
 	{
 		create_var_list_or_find_node(head_var, input, envp);
 		return ;
