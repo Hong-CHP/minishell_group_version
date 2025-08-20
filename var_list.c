@@ -15,16 +15,36 @@ t_variable	*search_target_var_node(t_varlist **head, char *find_var)
 	return (NULL);
 }
 
-void    find_var_node_modif_val(t_variable *modif_var_node, char *match)
+void    find_var_node_modif_val(t_variable *modif_var_node, char *match, t_varlist **head)
 {
     char *find_val;
+	int		ch;
 
 	if (*(match + 1))
     	find_val = ft_strdup(match + 1);
 	else
 		find_val = ft_strdup("");
     if (!find_val)
+	{
         return ;
+	}
+	ch = if_quote(find_val);
+	if (ch == -1)
+	{
+		printf("unclose quote\n");
+		free(modif_var_node->val);
+		free(find_val);
+		return ;
+	}
+	if (ch != 0)
+	{
+		find_val = extract_value(find_val, head, ch);
+		if (!find_val)
+		{
+			free(modif_var_node->val);
+			return ;
+		}
+	}
     if (modif_var_node->val)
         free(modif_var_node->val);
     modif_var_node->val = find_val;
@@ -45,11 +65,10 @@ void	create_var_list(t_varlist **head, char *input)
 		return ;
 	}
 	ft_memset(var_node->var_data, 0, sizeof(t_variable));
-	if (!init_registre_variable(var_node->var_data, input))
+	if (!init_registre_variable(var_node->var_data, input, head))
 	{
 		free(var_node->var_data);
 		free(var_node);
-		printf("invalid name for variable\n");
 		return ;
 	}
 	var_node->next = NULL;
@@ -78,7 +97,7 @@ void	process_var_val_export(t_varlist **head, char *input, t_variable *var_node)
 		create_var_list(head, input);
 	else if (var_node && ft_strchr(input, '='))
 	{
-		find_var_node_modif_val(var_node, match_var);
+		find_var_node_modif_val(var_node, match_var, head);
 		var_node->exported = 1;
 	}
 	else if (var_node && !ft_strchr(input, '='))
@@ -109,7 +128,7 @@ void	create_var_list_or_find_node(t_varlist **head, char *input, char **envp)
 			if (!var_node)
 				create_var_list(head, input);
 			else
-				find_var_node_modif_val(var_node, match_var);
+				find_var_node_modif_val(var_node, match_var, head);
 			free(find_var);
 		}
 		else

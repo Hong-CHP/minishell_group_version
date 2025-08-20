@@ -187,7 +187,6 @@ char	*reg_dollar_sign(char *str, t_varlist **head_var)
 		return (NULL);
 	}
 	fill_words_with_real_vals(word, str, vars, vals, t_len);
-	printf("word after replaced is : %s\n", word);
 	free_vars_vals(vars, vals);
 	return (word);
 }

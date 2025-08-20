@@ -178,6 +178,202 @@ echo "4. Complex: cat test_files/test.txt | wc -l"
 echo "5. Type 'exit' to quit"
 echo ""
 
+# Test 27: 重定向输出到文件
+echo "Test 27: Output redirection"
+echo "echo 'redirected text' > test_files/output.txt" | ./minishell
+cat test_files/output.txt
+echo ""
+
+# Test 28: 输入重定向
+echo "Test 28: Input redirection"
+echo "cat < test_files/test.txt" | ./minishell
+echo ""
+
+# Test 29: 输出追加 >>
+echo "Test 29: Output append redirection"
+echo "echo 'append line' >> test_files/output.txt" | ./minishell
+cat test_files/output.txt
+echo ""
+
+# Test 30: Here document
+echo "Test 30: Here document"
+echo "cat << EOF
+line1
+line2
+EOF" | ./minishell
+echo ""
+
+# Test 31: 空命令
+echo "Test 31: Empty command"
+echo "" | ./minishell
+echo "echo ''" | ./minishell
+echo ""
+
+# Test 32: 空格处理
+echo "Test 32: Whitespace handling"
+echo "        echo spaced" | ./minishell
+echo ""
+
+# Test 33: 超长输入 (4096+ chars)
+echo "Test 33: Very long input"
+LONG_CMD=$(yes "a" | head -n 5000 | tr -d '\n')
+echo "echo $LONG_CMD" | ./minishell
+echo ""
+
+# Test 34: 组合逻辑 &&
+echo "Test 34: Logical AND"
+echo "echo first && echo second" | ./minishell
+echo ""
+
+# Test 35: 组合逻辑 ||
+echo "Test 35: Logical OR"
+echo "false || echo 'fallback executed'" | ./minishell
+echo ""
+
+# Test 36: 混合逻辑
+echo "Test 36: Mixed logic"
+echo "false && echo 'should not print' || echo 'should print'" | ./minishell
+echo ""
+
+# Test 37: 重定向错误文件
+echo "Test 37: Invalid redirection"
+echo "cat > /root/forbidden.txt" | ./minishell
+echo ""
+
+# Test 38: 文件描述符错误
+echo "Test 38: Bad file descriptor"
+echo "echo hello 1>&9" | ./minishell
+echo ""
+
+# Test 39: unset 特殊变量
+echo "Test 39: Unset PATH and try ls"
+echo -e "unset PATH\nls" | ./minishell
+echo ""
+
+# Test 40: 环境变量展开边界情况
+echo "Test 40: Environment variable edge cases"
+echo -e "export EMPTY=\necho \$EMPTY\necho \$NOT_DEFINED" | ./minishell
+echo ""
+
+# Test 41: 多重引号嵌套
+echo "Test 41: Nested quotes"
+echo "echo \"double 'inside'\"; echo 'single \"inside\"'" | ./minishell
+echo ""
+
+# Test 42: 混合管道和重定向
+echo "Test 42: Pipe with redirection"
+echo "cat test_files/test.txt | grep Hello > test_files/grep_out.txt" | ./minishell
+cat test_files/grep_out.txt
+echo ""
+
+# Test 43: 子shell 嵌套
+echo "Test 43: Nested subshell"
+echo "((echo inside) && (echo subshell))" | ./minishell
+echo ""
+
+# Test 44: exit 状态码
+echo "Test 44: Exit status"
+echo "false; echo \$?" | ./minishell
+echo "true; echo \$?" | ./minishell
+echo ""
+
+# Test 45: Trap Ctrl-D (EOF)
+echo "Test 45: Ctrl-D simulation (expect exit)"
+printf "exit\n" | ./minishell
+echo ""
+
+# Test 46: Redirections with pipes and variables
+echo "Test 46: Redirections with pipes and variables"
+echo "cat < test_files/test.txt | grep \"\$JU\" | wc -l" | ./minishell
+echo "cat < test_files/test.txt | grep \$JU | wc -l" | ./minishell
+echo "echo \"hello world\" > test_files/out.txt" | ./minishell
+cat test_files/out.txt
+echo "echo \"hello world\" >> test_files/out.txt" | ./minishell
+cat test_files/out.txt
+echo "echo \"hello world\" | grep o | wc -l > test_files/out.txt" | ./minishell
+cat test_files/out.txt
+echo "echo \"\$JU\"" | ./minishell
+echo "echo \$JU" | ./minishell
+echo ""
+
+# ========================
+# Single quotes
+# ========================
+echo "Test 47: Single quotes handling"
+# ok cases
+echo "echo 'hello world'" | ./minishell
+echo "echo hello'world'" | ./minishell
+echo "echo hello'\\world\\'" | ./minishell   # expect ****hello\world\
+echo "echo hello'world\\'" | ./minishell     # ****helloworld\
+echo "echo 'lol'world''" | ./minishell       # ****lolworld
+echo "echo 'lol\\'world''" | ./minishell     # ****lol\world
+echo "echo 'lol\\world'" | ./minishell       # ****lol\world
+echo "echo world''" | ./minishell            # ****world
+echo "echo 'mix quote\\'" | ./minishell      # ****mix quote\
+echo "echo '\\'wolrd\\''" | ./minishell      # expect error (unclosed quote)
+echo "echo 'mix \\'quote' and \\\"double\\\"\"" | ./minishell # expect error (unclosed quote)
+echo "echo world\\''" | ./minishell          # expect error (unclosed quote)
+echo ""
+
+# ========================
+# Backslash handling
+# ========================
+echo "Test 48: Backslash handling"
+echo "echo \\\\lolo" | ./minishell          # ****\lolo
+echo "echo hello\\lolo" | ./minishell       # ****hellololo
+echo "echo double\\ momo" | ./minishell     # ****double momo
+echo "echo \\double\\momo" | ./minishell    # ****doublemomo
+echo "echo double\\'momo" | ./minishell     # ****double'momo
+echo "echo double\\\"momo" | ./minishell    # ****double\"momo
+echo "echo quote\\'" | ./minishell          # ****quote'
+echo "echo mix\\hello\\" | ./minishell      # expect error (incorrect syntax)
+echo ""
+
+# ========================
+# Double quotes
+# ========================
+echo "Test 49: Double quotes handling"
+echo "echo \"hello world\"" | ./minishell
+echo "echo \"hello\"world\"\"" | ./minishell
+echo "echo hello\"world\"" | ./minishell
+echo "echo \"double\\ momo\"" | ./minishell      # ****double\ momo
+echo "echo \"hello\\\"world\\\"\"" | ./minishell # ****hello"world"
+echo "echo \"hello \\'world\\'\"" | ./minishell  # ****hello \'world\'
+echo "echo hello\"\\'world\\'\"" | ./minishell   # ****hello\'world\'
+echo "echo mix\"hello \\'world\\'\"" | ./minishell # ****mixhello \'world\'
+echo "echo helo\"\"" | ./minishell               # ****helo
+echo "echo helo\"lolo \fufu\"" | ./minishell     # ****helololo \fufu
+echo "echo \"mix \\'quote' and \\\"double\\\"\"" | ./minishell  # ****mix \'quote' and "double"
+echo "echo \"mix \\'quote\\' and \\\"double\\\"\"" | ./minishell # ****mix \'quote\' and "double"
+echo "echo \" kiki just us\\ lolo\"" | ./minishell # **** kiki just us\ lolo
+echo "echo helo\"lolo \\\"lolo" | ./minishell     # expect error (unclosed)
+echo "echo helo\"lolo \\\"" | ./minishell         # expect error (unclosed)
+echo "echo \"ff\\\"" | ./minishell                # expect error (unclosed)
+echo ""
+
+# ========================
+# Double quotes with variables
+# ========================
+echo "Test 50: Double quotes with variables"
+echo "export JU=ji MOMO=kk" | ./minishell
+echo "echo \"mix \$JU\"" | ./minishell          # mix ji
+echo "echo \"mix \"\$JU\"\"" | ./minishell      # mix ji
+echo "echo mix\"\$JU\"" | ./minishell           # mixji
+echo "echo \"\$JU\\ \$MOMO\"" | ./minishell     # ji\ kk
+echo "echo \"\$JU\\\"\$MOMO\\\"\"" | ./minishell # ji"kk"
+echo "echo \"\$JU \\'\$MOMO\\'\"" | ./minishell # ji \'kk\'
+echo "echo hello\"\\'world\\'\"" | ./minishell
+echo "echo mix\"hello \\'world\\'\"" | ./minishell
+echo "echo helo\"\"" | ./minishell
+echo "echo helo\"lolo \fufu\"" | ./minishell
+echo "echo \"mix \\'quote' and \\\"double\\\"\"" | ./minishell
+echo "echo \"mix \\'quote\\' and \\\"double\\\"\"" | ./minishell
+echo "echo \" kiki just us\\ lolo\"" | ./minishell
+echo "echo helo\"lolo \\\"lolo" | ./minishell   # expect error (unclosed)
+echo "echo helo\"lolo \\\"" | ./minishell       # expect error (unclosed)
+echo "echo \"ff\\\"" | ./minishell              # expect error (unclosed)
+echo ""
+
 # Cleanup
 # rm -rf test_files
 
