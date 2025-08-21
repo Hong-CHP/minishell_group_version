@@ -138,7 +138,7 @@ char	*extract_value_if_sign(char *value, t_varlist **head_var);
 //var_val.c
 void	fill_variable_value(char *content, char *var, char *val);
 int 	init_registre_variable(t_variable *var_dt, char *input, t_varlist **head_var);
-char	*extract_value(char *val, t_varlist **head_var, int ch);
+char	*extract_value(char *val, t_varlist **head_var);
 //extract_cmd_utils.c
 int		if_slash_trans(char *str);
 char	*find_words_in_single_quote(char *content, char ch);

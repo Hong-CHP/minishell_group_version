@@ -38,7 +38,7 @@ void    find_var_node_modif_val(t_variable *modif_var_node, char *match, t_varli
 	}
 	if (ch != 0)
 	{
-		find_val = extract_value(find_val, head, ch);
+		find_val = extract_value(find_val, head);
 		if (!find_val)
 		{
 			free(modif_var_node->val);

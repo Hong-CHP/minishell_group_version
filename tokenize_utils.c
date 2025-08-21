@@ -7,10 +7,8 @@ int		if_quote(char *str)
 	char	ch;
 
 	i = 0;
-	printf("str os %s\n", str);
 	while (str[i] && str[i] != '\''&& str[i] != '"')
 		i++;
-	printf("str[i] is %c\n", str[i]);
 	if (str[i] == '\'' || str[i] == '"')
 	{
 		ch = str[i];
@@ -18,7 +16,6 @@ int		if_quote(char *str)
 	}
 	else
 		return (0);
-	printf("ch is %c\n", ch);
 	while (str[i] && str[i] != ch)
 		i++;
 	if (str[i] == ch)

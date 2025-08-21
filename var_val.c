@@ -25,12 +25,10 @@ void	fill_variable_value(char *content, char *var, char *val)
 	val[j] = '\0';
 }
 
-char	*extract_value(char *val, t_varlist **head_var, int ch)
+char	*extract_value(char *val, t_varlist **head_var)
 {
 	char	*value;
 
-	if (ch != 0 && val[0] != val[ft_strlen(val) - 1])
-		return (NULL);
 	value = extract_value_if_sign(val, head_var);
 	if (!value)
 		return (NULL);
@@ -41,6 +39,7 @@ char	*extract_value(char *val, t_varlist **head_var, int ch)
 t_variable	*registre_var_val(char *input, t_variable *var_dt, char *value, t_varlist **head_var)
 {
 	int		ch;
+	char	*tmp;
 
 	if (var_dt->exported == 1)
 		fill_variable_value(&input[7], var_dt->var, var_dt->val);
@@ -48,6 +47,12 @@ t_variable	*registre_var_val(char *input, t_variable *var_dt, char *value, t_var
 		fill_variable_value(input, var_dt->var, var_dt->val);
 	printf("actual var node data -> val is: %s\n", var_dt->val);
 	ch = if_quote(var_dt->val);
+	if (if_dollar_sign(var_dt->val) > 0 && ch == 0)
+	{
+		tmp = var_dt->val;
+		var_dt->val = reg_dollar_sign(tmp, head_var);
+		free(tmp);
+	}
 	if (ch == -1)
 	{
 		printf("unclose quote\n");
@@ -56,7 +61,7 @@ t_variable	*registre_var_val(char *input, t_variable *var_dt, char *value, t_var
 	}
 	if (ch != 0)
 	{
-		value = extract_value(var_dt->val, head_var, ch);
+		value = extract_value(var_dt->val, head_var);
 		if (!value)
 		{
 			free(var_dt->val);
